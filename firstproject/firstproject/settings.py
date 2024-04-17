@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+import os
+
 from django.db import connections
 from pathlib import Path
 
@@ -24,7 +26,7 @@ SECRET_KEY = 'django-insecure-im^mrw8x((s0#xsslbz#z_7gw8!d&46m6e#xz^lqcu!jjz6-&9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -35,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'firstapp',
-    # 'rest_framework'
+    'firstapp.apps.FirstappConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +75,7 @@ WSGI_APPLICATION = 'firstproject.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-DATABASE_ROUTERS = ['firstproject.settings.ApplicationRouter', ]
+# DATABASE_ROUTERS = ['firstproject.settings.ApplicationRouter', ]
 # DATABASE_APPS_MAPPING = {'secondproject': 'secondproject'}
 
 DATABASES = {
@@ -97,56 +99,56 @@ DATABASES = {
 }
 
 
-# class ApplicationRouter:
-#     """
-#      A router that is used to route queries from an application to its database
-#     """
-#
-#     # Defines application labels
-#     route_app_labels = {'secondproject'}
-#
-#     def db_for_read(self, model, **hints):
-#         """
-#          If the model is from app1, it suggests querying the app1 database. If the model is from app2, then app2
-#         """
-#         if model._meta.app_label in self.route_app_labels:
-#             return model._meta.app_label
-#         return None
-#
-#     def db_for_write(self, model, **hints):
-#         """
-#          If the model is from app1, it suggests querying the app1 database. If the model is from app2, then app2
-#         """
-#         if model._meta.app_label in self.route_app_labels:
-#             return model._meta.app_label
-#         return None
-#
-#     def allow_relation(self, obj1, obj2, **hints):
-#         """
-#         Allow relations if a model in the app1 or app2 apps is
-#         involved.
-#         """
-#         if (
-#                 obj1._meta.app_label in self.route_app_labels or
-#                 obj2._meta.app_label in self.route_app_labels
-#         ):
-#             return True
-#         return None
-#
-#     def allow_migrate(self, db, app_label, model_name=None, **hints):
-#         """
-#         Make sure the app1 and app2 apps only appear in the
-#         app1 or app2 database.
-#         """
-#         if app_label in self.route_app_labels:
-#             return db == app_label
-#         return None
-#
-#     def allow_migrate(self, db, app_label, model_name=None, **hints):
-#         """
-#         All app1 or app2 models end up in this pool.
-#         """
-#         return True
+class ApplicationRouter:
+    """
+     A router that is used to route queries from an application to its database
+    """
+
+    # Defines application labels
+    route_app_labels = {'secondproject'}
+
+    def db_for_read(self, model, **hints):
+        """
+         If the model is from app1, it suggests querying the app1 database. If the model is from app2, then app2
+        """
+        if model._meta.app_label in self.route_app_labels:
+            return model._meta.app_label
+        return None
+
+    def db_for_write(self, model, **hints):
+        """
+         If the model is from app1, it suggests querying the app1 database. If the model is from app2, then app2
+        """
+        if model._meta.app_label in self.route_app_labels:
+            return model._meta.app_label
+        return None
+
+    def allow_relation(self, obj1, obj2, **hints):
+        """
+        Allow relations if a model in the app1 or app2 apps is
+        involved.
+        """
+        if (
+                obj1._meta.app_label in self.route_app_labels or
+                obj2._meta.app_label in self.route_app_labels
+        ):
+            return True
+        return None
+
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        """
+        Make sure the app1 and app2 apps only appear in the
+        app1 or app2 database.
+        """
+        if app_label in self.route_app_labels:
+            return db == app_label
+        return None
+
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        """
+        All app1 or app2 models end up in this pool.
+        """
+        return True
 
 
 # Password validation
@@ -182,7 +184,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_DIR = ''
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static")
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
