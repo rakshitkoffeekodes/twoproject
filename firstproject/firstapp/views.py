@@ -1,3 +1,4 @@
+from django import forms
 from django.shortcuts import redirect, render, get_object_or_404
 from rest_framework.decorators import api_view
 
@@ -23,8 +24,13 @@ import requests
 #     return render(request, 'admin/change_list.html')
 
 
+class NewEntryForm(forms.Form):
+    option = forms.CharField(label="Title")
+    name = forms.CharField(widget=forms.Textarea)
+
+
 def accept_reject_form(request):
-    print('====')
+    print('====>>>>>')
     if request.method == 'POST':
         option = request.POST.get('option')
         name = request.POST.get('name')
@@ -35,5 +41,5 @@ def accept_reject_form(request):
         return render(request, 'admin/change_list.html')
 
 
-# def open_popup(request):
-#     return render(request, 'admin/change_list.html')
+def form(request):
+    return render(request, 'form.html')

@@ -1,8 +1,19 @@
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
+from.models import *
 
-from .models import *
+
+def accept_reject_form(request):
+    print('====>>>>>')
+    if request.method == 'POST':
+        option = request.POST.get('option')
+        name = request.POST.get('name')
+        print(option, name)
+        return render(request, 'admin/change_list.html')
+
+    else:
+        return render(request, 'admin/change_list.html')
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -10,8 +21,8 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
-
     def Popup(self, obj):
+        url = reverse('accept_reject_form')
         return format_html("""
             <!DOCTYPE html>
             <html lang="en">
@@ -24,7 +35,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
             <body>
                 <style>
 
-                .popup {{
+               .popup {{
                         margin-top: 60px;
                         position: fixed;
                         top: 13vh;
@@ -38,54 +49,54 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         background-color: white;
                     }}
 
-                  .first-container{{
+                 .first-container{{
                         width:100%;
                         height: 15%;
                         border-bottom: 2px solid #e8e8e8;
                         display: flex;
                     }}
 
-                  .font-family{{
+                 .font-family{{
                         font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
                     }}
 
-                  .p-header{{
+                 .p-header{{
                         padding-left: 10px;
                         padding-top: 10px;
                         padding-bottom: 10px;
                     }}
 
-                  .p-header-2 {{
+                 .p-header-2 {{
                         padding-left: 10px;
                         padding-top: 5px;
                         padding-bottom: 5px;
                     }}
 
-                  .first-container-1 {{
+                 .first-container-1 {{
                         width: 97%;
                     }}
 
-                  .i {{
+                 .i {{
                         font-size:20px;
                         margin-right: 15px;
                         margin-top:12px;
                         color: #7e7e7e;
                     }}
 
-                  .second-container {{
+                 .second-container {{
                         width:100%;
                         height: 85%;
                         padding: 15px;
                     }}
 
-                  .second-container-1 {{
+                 .second-container-1 {{
                         background-color: #e8e8e8;
                         width: 100%;
                         height: 100%;
                         padding:10px;
                     }}
 
-                  .first-div {{
+                 .first-div {{
                         width: 100%;
                         height: 60%;
                         background-color: white;
@@ -94,7 +105,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         border-radius: 3px;
                     }}
 
-                  .second-div {{
+                 .second-div {{
                         width: 100%;
                         height: 37%;
                         background-color: white;
@@ -103,29 +114,29 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         border-radius: 3px;
                     }}
 
-                  .first {{
+                 .first {{
                         width: 100%;
                         height: 25%;
                         border-bottom: 1px solid #e8e8e8;
                     }}
 
-                  .second {{
+                 .second {{
                         display:flex;
                         width: 100%;
                         height: 25%;
                     }}
 
-                  .select-label{{
+                 .select-label{{
                         font-size: 15px;
                         margin-top: 10px;
-                        margin-right:20px;
+                        margin-right:20px
                     }}
 
-                  .required {{
+                 .required {{
                         color: red;
                     }}
 
-                  .dropdown {{
+                 .dropdown {{
                         width: 40%;
                         height: 90%;
                         margin-top: 10px;
@@ -134,30 +145,30 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         border-radius: 3px;
                     }}
 
-                  .third{{
+                 .third{{
                         display: flex;
                         width: 100%;
                         height: 25%;
                     }}
 
-                  .enter-label{{
+                 .enter-label{{
                         font-size: 15px;
                        margin-top: 25px;
                         margin-right:19px;
                     }}
 
-                  .text-input{{
+                 .text-input{{
                         width:70%;
                         margin-top: 25px;
-                        outline: none;    
+                        outline: none;
                     }}
 
-                  .four{{
+                 .four{{
                         border-bottom: 1px solid #e8e8e8;
                         height: 40%;
                     }}
 
-                  .save-btn{{
+                 .save-btn{{
                         margin-top: 2%;
                         margin-left: 7%;
                         padding-left: 40%;
@@ -174,10 +185,11 @@ class SubCategoryAdmin(admin.ModelAdmin):
                     Action
                 </button>
                 <div id="form" class="popup" style="display:none;">
-                    <form action="" method="post" id="myForm" >
-                        <div class="first-container">
+                    <form action="{}" method="post" id="myForm">
+                        {{% csrf_token %}}
+                        <div class="first-container">   
                             <div class="first-container-1">
-                                <p class="p-header font-family"> Accept Reject Action Form </p> 
+                                <p class="p-header font-family"> Accept Reject Action Form </p>
                             </div>
                             <div class="first-container-2">
                                 <i class="fa fa-times i" id="cancel" aria-hidden="true"></i>
@@ -235,14 +247,14 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
                         document.getElementById("cancel").addEventListener("click", function()
                     {{
-                                document.getElementById("form").style.display = "none"; 
-                           }}); 
+                                document.getElementById("form").style.display = "none";
+                           }});
                 </script>
             </body>
         </html>
-        """, )
+        """, obj.aceept_reject_form())
 
-    Popup.short_description = 'Action'
+    Popup.short_description = "Action"
 
     list_display = ["sub_category_id", "sub_category_name", "description", "category_id", "Popup"]
 
