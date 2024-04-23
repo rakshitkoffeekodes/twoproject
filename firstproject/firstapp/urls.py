@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import *
+from. import views
 
 urlpatterns = [
-    path('save-category/', add_category, name='save_category'),
+    # other URL patterns
+    path('accept_reject_form/', views.accept_reject_form, name='accept_reject_form'),
 ]
