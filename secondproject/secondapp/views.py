@@ -16,3 +16,16 @@ def category_data(request):
     return JsonResponse({'message': 'Category add successfully.'})
 
 
+@api_view(['POST'])
+def sub_category(request):
+    sub_category_name = request.POST['name']
+    description = request.POST['description']
+    print(description, sub_category_name)
+    add_sub_category = SubCategory()
+    add_sub_category.sub_category_name = sub_category_name
+    add_sub_category.description = description
+    add_sub_category.save()
+    return JsonResponse({'message': 'sub category data saved successfully.'})
+
+
+

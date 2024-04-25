@@ -10,7 +10,7 @@
 </head>
 <body>
         <style>
-            .popup {{
+           .popup {{
                     margin-top: 60px;
                     position: fixed;
                     top: 13vh;
@@ -24,54 +24,54 @@
                     background-color: white;
                 }}
 
-              .first-container{{
+             .first-container{{
                     width:100%;
                     height: 15%;
                     border-bottom: 2px solid #e8e8e8;
                     display: flex;
                 }}
 
-              .font-family{{
+             .font-family{{
                     font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
                 }}
 
-              .p-header{{
+             .p-header{{
                     padding-left: 10px;
                     padding-top: 10px;
                     padding-bottom: 10px;
                 }}
 
-              .p-header-2 {{
+             .p-header-2 {{
                     padding-left: 10px;
                     padding-top: 5px;
                     padding-bottom: 5px;
                 }}
 
-              .first-container-1 {{
+             .first-container-1 {{
                     width: 97%;
                 }}
 
-              .i {{
+             .i {{
                     font-size:20px;
                     margin-right: 15px;
                     margin-top:12px;
                     color: #7e7e7e;
                 }}
 
-              .second-container {{
+             .second-container {{
                     width:100%;
                     height: 85%;
                     padding: 15px;
                 }}
 
-              .second-container-1 {{
+             .second-container-1 {{
                     background-color: #e8e8e8;
                     width: 100%;
                     height: 100%;
                     padding:10px;
                 }}
 
-              .first-div {{
+             .first-div {{
                     width: 100%;
                     height: 60%;
                     background-color: white;
@@ -80,7 +80,7 @@
                     border-radius: 3px;
                 }}
 
-              .second-div {{
+             .second-div {{
                     width: 100%;
                     height: 37%;
                     background-color: white;
@@ -89,29 +89,29 @@
                     border-radius: 3px;
                 }}
 
-              .first {{
+             .first {{
                     width: 100%;
                     height: 25%;
                     border-bottom: 1px solid #e8e8e8;
                 }}
 
-              .second {{
+             .second {{
                     display:flex;
                     width: 100%;
                     height: 25%;
                 }}
 
-              .select-label{{
+             .select-label{{
                     font-size: 15px;
                     margin-top: 10px;
                     margin-right:20px;
                 }}
 
-              .required {{
+             .required {{
                     color: red;
                 }}
 
-              .dropdown {{
+             .dropdown {{
                     width: 40%;
                     height: 90%;
                     margin-top: 10px;
@@ -120,30 +120,30 @@
                     border-radius: 3px;
                 }}
 
-              .third{{
+             .third{{
                     display: flex;
                     width: 100%;
                     height: 25%;
                 }}
 
-              .enter-label{{
+             .enter-label{{
                     font-size: 15px;
                    margin-top: 25px;
                     margin-right:19px;
                 }}
 
-              .text-input{{
+             .text-input{{
                     width:70%;
                     margin-top: 25px;
                     outline: none;
                 }}
 
-              .four{{
+             .four {{
                     border-bottom: 1px solid #e8e8e8;
                     height: 40%;
                 }}
 
-              .save-btn{{
+             .save-btn{{
                     margin-top: 2%;
                     margin-left: 7%;
                     padding-left: 40%;
@@ -154,12 +154,8 @@
                     border-radius: 3px;
                 }}
         </style>
-        <button type="button" onclick="popupFn()" class="button">
-            Action
-        </button>
-
-        <div id="form" class="popup" style="display:none;">
-            <form action="{% url 'accept_reject_form' %}" method="post" id="myForm">
+        <div id="form">
+            <form action="{% url 'accept_reject_form' pk %}" method="post" id="myForm">
                 {% csrf_token %}
                 <div class="first-container">
                     <div class="first-container-1">
@@ -170,7 +166,7 @@
                     </div>
                 </div>
                 <div class="second-container">
-                    <div class="second-container-1">
+                    <div class="second-container">
                         <div class="first-div">
                             <div class="first">
                                 <p class="p-header-2 font-family ">Select Accept / Reject</p>
@@ -183,9 +179,8 @@
                                     <option name="option" value="2">Reject</option>
                                 </select>
                             </div>
-                            <div class="third">
-                                <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;&nbsp;&nbsp;:
-                                </p>
+                            <div class="third-div">
+                                <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;&nbsp;&nbsp;:</p>
                                 <input type="text" name="name" id="input" class="text-input" placeholder="Enter ..">
                             </div>
                         </div>
@@ -203,12 +198,9 @@
         </div>
         <script>
             function popupFn() {
-                var d = document.getElementById("form");
                 var dropdown = document.getElementById("dropdown");
                 var input = document.querySelector(".text-input");
                 var cancel = document.getElementById("cancel");
-
-                d.style.display = "block";
 
                 dropdown.addEventListener("change", function() {
                     if (this.value === "1")
