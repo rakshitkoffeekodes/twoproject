@@ -4,18 +4,6 @@ from django.utils.html import format_html
 from .models import *
 
 
-def accept_reject_form(request):
-    print('====>>>>>')
-    if request.method == 'POST':
-        option = request.POST.get('option')
-        name = request.POST.get('name')
-        print(option, name)
-        return render(request, 'admin/change_list.html')
-
-    else:
-        return render(request, 'admin/change_list.html')
-
-
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "description")
 
@@ -23,6 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class SubCategoryAdmin(admin.ModelAdmin):
     def Popup(self, obj):
         form_url = reverse('accept_reject_form', args=[obj.pk])
+        print(form_url)
         return format_html("""
         <!DOCTYPE html>
         <html lang="en">
@@ -37,18 +26,18 @@ class SubCategoryAdmin(admin.ModelAdmin):
         <body>
                 <style>
                    .popup {{
-                            margin-top: 60px;
-                            position: fixed;
-                            top: 13vh;
-                            left: 30vw;
-                            bottom: 10px;
-                            right: 0;
-                            width: 50vw;
-                            height: 50vh;
-                            box-shadow: 1px 1px 2px #7e7e7e;
-                            border-radius: 3px;
-                            background-color: white;
-                        }}
+                        margin-top: 60px;
+                        position: fixed;
+                        top: 13vh;
+                        left: 37vw;
+                        bottom: 10px;
+                        right: 0;
+                        width: 40vw;
+                        height: 50vh;
+                        box-shadow: 5px 5px 2px #7e7e7e;
+                        border-radius: 3px;
+                        background-color: white;
+                    }}
 
                      .first-container{{
                             width:100%;
@@ -171,7 +160,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         }}
 
                      .save-btn{{
-                            margin-top: 2%;
+                            margin-top: 5%;
                             margin-left: 7%;
                             padding-left: 40%;
                             padding-right: 40%;
@@ -181,10 +170,10 @@ class SubCategoryAdmin(admin.ModelAdmin):
                             border-radius: 3px;
                         }}
                 </style>
-                <button type="button" onclick="popupFn()" class="button">
+                <button type="button" onclick="popupFn()" id="button" class="button">
                     Action
                 </button>
-                <div id="form" class="popup" style="display:none;">
+                <div id="form" class="popup" style="display:none;>
                     <form action="/accept_reject_form/" method="post" id="myForm" >
                         <div class="first-container">
                             <div class="first-container-1">
@@ -221,38 +210,41 @@ class SubCategoryAdmin(admin.ModelAdmin):
                     </form>
                 </div>
                 <script>
+                    
                     function popupFn() {{
                         var form = document.getElementById("form");
                         var dropdown = document.getElementById("dropdown");
                         var input = document.querySelector(".text-input");
                         var cancel = document.getElementById("cancel");
-
+                        var body = document.querySelector("body");
+                    
                         form.style.display = "block";
                         
-
+                    
                         dropdown.addEventListener("change", function() {{
                             if (this.value === "1")
                                 input.placeholder = "Enter a URL";
                             else if (this.value === "2")
-                                input.placeholder = "Enter a Reason";
+                                input.placeholder = "Enter a reason";
                             else if (this.value === "0")
                                 input.placeholder = "Enter..";
                         }});
+                        
+                        
                     }}
-
+                    
                     function getFormData(formUrl) {{
                         var option = document.getElementById("dropdown").value;
                         var name = document.getElementById("input").value;
-                        console.log(option);
-                        console.log(name);
                         var url = formUrl + '?option=' + option + '&name=' + name;
                         window.location.href = url;
-                    }}a
-
+                    }}
+                    
                     document.getElementById("cancel").addEventListener("click", function()
                     {{
-                                document.getElementById("form").style.display = "none"; 
-                           }});
+                        document.getElementById("form").style.display = "none";
+                        document.querySelector("body").style.opacity = "1";
+                    }});
                 </script>
             </body>
         </html>
