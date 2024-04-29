@@ -25,202 +25,150 @@ class SubCategoryAdmin(admin.ModelAdmin):
         </head>
         <body>
                 <style>
-                   .popup {{
-                        margin-top: 60px;
+                    .popup {{
                         position: fixed;
-                        top: 13vh;
-                        left: 37vw;
-                        bottom: 10px;
+                        top: 0;
                         right: 0;
-                        width: 40vw;
-                        height: 50vh;
-                        box-shadow: 5px 5px 2px #7e7e7e;
-                        border-radius: 3px;
-                        background-color: white;
+                        left: 0;
+                        bottom: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        z-index: 10000;
                     }}
-
-                     .first-container{{
-                            width:100%;
-                            height: 12%;
-                            border-bottom: 2px solid #e8e8e8;
-                            display: flex;
-                        }}
-
-                     .font-family{{
-                            font-family: "Source Sans Pro",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"
-                        }}
-
-                     .p-header{{
-                            padding-left: 10px;
-                            padding-top: 5px;
-                            padding-bottom: 10px;
-                        }}
-
-                     .p-header-2 {{
-                            padding-left: 10px;
-                            padding-top: 5px;
-                            padding-bottom: 5px;
-                        }}
-
-                     .first-container-1 {{
-                            width: 97%;
-                        }}
-
-                     .i {{
-                            font-size:20px;
-                            margin-right: 15px;
-                            margin-top:10px;
-                            color: #7e7e7e;
-                        }}
-
-                     .second-container {{
-                            width:100%;
-                            height: 88%;
-                            padding: 15px;
-                        }}
-
-                     .second-container-1 {{
-                            background-color: #e8e8e8;
-                            width: 100%;
-                            height: 100%;
-                            padding:10px;
-                        }}
-
-                     .first-div {{
-                            width: 100%;
-                            height: 100%;
-                            background-color: white;
-                            margin-bottom:10px;
-                            border-top: 2px solid #007bff;
-                            border-radius: 3px;
-                        }}
-
-                     .second-div {{
-                            width: 100%;
-                            height: 37%;
-                            background-color: white;
-                            margin: 0px 10px 10px 10px;
-                            border-top: 2px solid #328ff4;
-                            border-radius: 3px;
-                        }}
-
-                     .first {{
-                            width: 100%;
-                            height: 15%;
-                            border-bottom: 1px solid #e8e8e8;
-                        }}
-
-                     .second {{
-                            display:flex;
-                            width: 100%;
-                            height: 20%;
-                        }}
-
-                     .select-label{{
-                            font-size: 15px;
-                            margin-top: 10px;
-                            margin-right:20px;
-                        }}
-
-                     .required {{
-                            color: red;
-                        }}
-
-                     .dropdown {{
-                            width: 40%;
-                            height: 90%;
-                            margin-top: 10px;
-                            outline: none;
-                            border: 1px solid #ced4da;
-                            border-radius: 3px;
-                        }}
-
-                     .third{{
-                            display: flex;
-                            width: 100%;
-                            height: 20%;
-                            margin-bottom: 5%;
-                        }}
-
-                     .enter-label{{
-                            font-size: 15px;
-                            margin-top: 25px;
-                            margin-right:19px;
-                        }}
-
-                     .text-input{{
-                            width:70%;
-                            margin-top: 25px;
-                            outline: none;
-                            height: 15%;
-                        }}
-
-                     .four {{
-                            height: 10%;
-                        }}
-
-                     .save-btn{{
-                            margin-top: 5%;
-                            margin-left: 7%;
-                            padding-left: 40%;
-                            padding-right: 40%;
-                            border: 0px;
-                            background-color: #28a745;
-                            color: white;
-                            border-radius: 3px;
-                        }}
+                    
+                    .form-data {{
+                        position: fixed;
+                        background-color: white;
+                        border-radius: 20px;
+                        width: 25%;
+                        height: 70%;
+                        left: 40vw;
+                        top: 15vh;
+                    }}
+                    
+                    .cancel-icon{{
+                        position: absolute;
+                        right: 8px;
+                        top: 8px;
+                        color: white;
+                        background: #8ca4b5;
+                        padding: 5px 7px;
+                        border-radius: 100%;
+                    }}
+                    
+                    .first-container {{
+                        width: 100%;
+                        height: 10%;
+                    }}
+                    
+                    .second-container {{
+                        padding-left: 20px;
+                        font-family: "Garamond", Times, serif;
+                        font-weight: bold;
+                    }}
+                    
+                    .third-container {{
+                        width: 100%;
+                        height: 30%;
+                    }}
+                    
+                    .four-container {{
+                        width: 100%;
+                        height: 30%;
+                        
+                    }}
+                    
+                    .five-container {{
+                        width: 100%;
+                        height: 30%;
+                    }}
+                    
+                    .required {{
+                        color:red;
+                    }}
+                    
+                    .select-label{{
+                        font-family: "Times New Roman", Times, serif;
+                        padding-left: 20px;
+                        padding-top: 10px;
+                        font-size: 20px;
+                    }}
+                    
+                    .dropdown {{
+                        width:87%;
+                        height: 30%;
+                        margin-left:20px;
+                        outline: none;
+                        border-radius: 20px;
+                        font-family: "Times New Roman", Times, serif;
+                    }}
+                    
+                    .enter-label{{
+                        font-family: "Times New Roman", Times, serif;
+                        padding-left: 20px;
+                        padding-top: 10px;
+                        font-size: 20px;
+                    }}
+                    
+                    .input-text {{
+                        width:87%;
+                        height: 30%;
+                        margin-left:20px;
+                        border-radius: 15px;
+                        font-family: "Times New Roman", Times, serif;
+                        outline: none;
+                    }}
+                    
+                    .save-btn {{
+                        margin-left:20px;
+                        padding: 2% 38%;
+                        border-radius: 20px;
+                        color: white;
+                        background-color: black;
+                        cursor: pointer;
+                    }}
+                    
                 </style>
-                <button type="button" onclick="popupFn()" id="button" class="button">
+                <button type="button" onclick="popupFn()" id="button" class="btn btn-primary">
                     Action
                 </button>
-                <div id="form" class="popup" style="display:none;>
-                    <form action="/accept_reject_form/" method="post" id="myForm" >
-                        <div class="first-container">
-                            <div class="first-container-1">
-                                <p class="p-header font-family"> Accept Reject Action Form </p> 
+                <div id="form" class="popup" style="display:none;">
+                     <div class="form-data" id="form-data">
+                        <form action="/accept_reject_form/" method="post" id="myForm" >
+                            <div class="first-container">
+                                <i class="fa fa-times cancel-icon" aria-hidden="true" id="cancel"></i>
                             </div>
-                            <div class="first-container-2">
-                                <i class="fa fa-times i" id="cancel" aria-hidden="true"></i>
+                            <div class="second-container">
+                                <h3>Action Form</h3>
                             </div>
-                        </div>
-                        <div class="second-container">
-                            <div class="second-container-1" >
-                                <div class="first-div">
-                                    <div class="first">
-                                        <p class="p-header-2 font-family ">Select Accept / Reject</p>
-                                    </div>
-                                    <div class="second">
-                                        <p class="p-header-2 font-family select-label">Select <span class="required">*</span> :</p>
-                                        <select class="dropdown" name="option" id="dropdown">
-                                            <option name="option" value="0">--------</option>
-                                            <option name="option" value="1">Accept</option>
-                                            <option name="option" value="2">Reject</option>
-                                        </select>
-                                    </div>
-                                    <div class="third">
-                                        <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;&nbsp;&nbsp;:</p>
-                                        <input type="text" name="name" id="input" class="text-input" placeholder="Enter ..">
-                                    </div>
-                                    <div class="four">
-                                        <button type="button" onclick="getFormData('{}')" class="save-btn">save</button>
-                                    </div>
-                                </div>
+                            <div class="third-container">
+                                <p class="p-header-2 font-family select-label">Select <span class="required">*</span> :</p>
+                                <select class="dropdown" name="option" id="dropdown" style="border-color: black;">
+                                    <option name="option" value="0">--------</option>
+                                    <option name="option" value="1">Accept</option>
+                                    <option name="option" value="2">Reject</option>
+                                </select>
                             </div>
-                        </div>
-                    </form>
+                            <div class="four-container">
+                                <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;:</p>
+                                <input type="text" id="input" name="name" placeholder="Enter..." class="input-text" style="border-color: black; border-radius: 20px;">
+                            </div>
+                            <div class="five-container">
+                                <button type="button" onclick="getFormData('{}')" class="save-btn">save</button>
+                            </div>
+                        </form>
+                     </div>
                 </div>
                 <script>
-                    
-                    function popupFn() {{
+                     function popupFn() {{
                         var form = document.getElementById("form");
                         var dropdown = document.getElementById("dropdown");
-                        var input = document.querySelector(".text-input");
+                        var input = document.querySelector(".input-text");
                         var cancel = document.getElementById("cancel");
-                        var body = document.querySelector("body");
-                    
+
                         form.style.display = "block";
-                        
-                    
+
                         dropdown.addEventListener("change", function() {{
                             if (this.value === "1")
                                 input.placeholder = "Enter a URL";
@@ -229,7 +177,6 @@ class SubCategoryAdmin(admin.ModelAdmin):
                             else if (this.value === "0")
                                 input.placeholder = "Enter..";
                         }});
-                        
                         
                     }}
                     
@@ -243,8 +190,8 @@ class SubCategoryAdmin(admin.ModelAdmin):
                     document.getElementById("cancel").addEventListener("click", function()
                     {{
                         document.getElementById("form").style.display = "none";
-                        document.querySelector("body").style.opacity = "1";
                     }});
+                    
                 </script>
             </body>
         </html>
@@ -257,3 +204,75 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
+
+#
+# <div class="demo" >
+#                     <div id="form" class="popup" style="display:none;>
+#                         <form action="/accept_reject_form/" method="post" id="myForm" >
+#                             <div class="first-container">
+#                                 <div class="first-container-1">
+#                                     <p class="p-header font-family"> Accept Reject Action Form </p>
+#                                 </div>
+#                                 <div class="first-container-2">
+#                                     <i class="fa fa-times i" id="cancel" aria-hidden="true"></i>
+#                                 </div>
+#                             </div>
+#                             <div class="second-container">
+#                                 <div class="second-container-1" >
+#                                     <div class="first-div">
+#                                         <div class="first">
+#                                             <p class="p-header-2 font-family ">Select Accept / Reject</p>
+#                                         </div>
+#                                         <div class="second">
+#                                             <p class="p-header-2 font-family select-label">Select <span class="required">*</span> :</p>
+#                                             <select class="dropdown" name="option" id="dropdown">
+#                                                 <option name="option" value="0">--------</option>
+#                                                 <option name="option" value="1">Accept</option>
+#                                                 <option name="option" value="2">Reject</option>
+#                                             </select>
+#                                         </div>
+#                                         <div class="third">
+#                                             <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;&nbsp;&nbsp;:</p>
+#                                             <input type="text" name="name" id="input" class="text-input" placeholder="Enter ..">
+#                                         </div>
+#                                         <div class="four">
+#                                             <button type="button" onclick="getFormData('{}')" class="save-btn">save</button>
+#                                         </div>
+#                                     </div>
+#                                 </div>
+#                             </div>
+#                         </form>
+#                     </div>
+#                 </div>
+
+#
+# function popupFn() {{
+#                         var form = document.getElementById("form");
+#                         var dropdown = document.getElementById("dropdown");
+#                         var input = document.querySelector(".text-input");
+#                         var cancel = document.getElementById("cancel");
+#                         var body = document.querySelector("body");
+#
+#                         form.style.display = "block";
+#
+#                         dropdown.addEventListener("change", function() {{
+#                             if (this.value === "1")
+#                                 input.placeholder = "Enter a URL";
+#                             else if (this.value === "2")
+#                                 input.placeholder = "Enter a reason";
+#                             else if (this.value === "0")
+#                                 input.placeholder = "Enter..";
+#                         }});
+#                     }}
+#
+#                     function getFormData(formUrl) {{
+#                         var option = document.getElementById("dropdown").value;
+#                         var name = document.getElementById("input").value;
+#                         var url = formUrl + '?option=' + option + '&name=' + name;
+#                         window.location.href = url;
+#                     }}
+#
+                    # document.getElementById("cancel").addEventListener("click", function()
+                    # {{
+                    #     document.getElementById("form").style.display = "none";
+                    # }});
