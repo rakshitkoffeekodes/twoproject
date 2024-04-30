@@ -39,43 +39,48 @@ class SubCategoryAdmin(admin.ModelAdmin):
                     
                     .form-data {{
                         position: fixed;
-                        background-color: white;
-                        border-radius: 20px;
+                        background-color: #f4f6f9;
+                        border-radius: 5px;
                         width: 25%;
-                        height: 70%;
+                        height: 55%;
                         left: 40vw;
-                        top: 15vh;
+                        top: 25vh;
                     }}
                     
                     .cancel-icon{{
                         position: absolute;
+                        font-size: 10px;
                         right: 8px;
                         top: 8px;
-                        color: white;
-                        background: #8ca4b5;
-                        padding: 5px 7px;
+                        color: #f4f6f9;
+                        background: #343a40;
+                        padding: 5px 6px;
                         border-radius: 100%;
                     }}
                     
                     .first-container {{
                         width: 100%;
-                        height: 10%;
+                        height: 5%;
                     }}
                     
                     .second-container {{
                         padding-left: 20px;
+                        padding-top: 10px;
                         font-family: "Garamond", Times, serif;
                         font-weight: bold;
+                        color: #343a40;
                     }}
                     
                     .third-container {{
                         width: 100%;
-                        height: 30%;
+                        height: 25%;
+                        color: #343a40;
                     }}
                     
                     .four-container {{
                         width: 100%;
-                        height: 30%;
+                        height: 25%;
+                        color: #343a40;
                         
                     }}
                     
@@ -92,40 +97,41 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         font-family: "Times New Roman", Times, serif;
                         padding-left: 20px;
                         padding-top: 10px;
-                        font-size: 20px;
+                        font-size: 15px;
                     }}
                     
                     .dropdown {{
-                        width:87%;
-                        height: 30%;
+                        width:88%;
+                        height: 45%;
                         margin-left:20px;
                         outline: none;
-                        border-radius: 20px;
+                        border-radius: 5px;
                         font-family: "Times New Roman", Times, serif;
+                        padding-left: 10px;
+                        padding-right: 10px;
                     }}
                     
                     .enter-label{{
                         font-family: "Times New Roman", Times, serif;
                         padding-left: 20px;
-                        padding-top: 10px;
-                        font-size: 20px;
+                        padding-top: 15px;
+                        font-size: 15px;
                     }}
                     
                     .input-text {{
-                        width:87%;
-                        height: 30%;
+                        width:88%;
                         margin-left:20px;
-                        border-radius: 15px;
+                        border-radius: 5px;
                         font-family: "Times New Roman", Times, serif;
                         outline: none;
                     }}
                     
                     .save-btn {{
+                        margin-top:10%;
                         margin-left:20px;
-                        padding: 2% 38%;
-                        border-radius: 20px;
+                        width: 88%;
+                        border-radius: 5px;
                         color: white;
-                        background-color: black;
                         cursor: pointer;
                     }}
                     
@@ -140,10 +146,10 @@ class SubCategoryAdmin(admin.ModelAdmin):
                                 <i class="fa fa-times cancel-icon" aria-hidden="true" id="cancel"></i>
                             </div>
                             <div class="second-container">
-                                <h3>Action Form</h3>
+                                <h5>Action Form</h5>
                             </div>
                             <div class="third-container">
-                                <p class="p-header-2 font-family select-label">Select <span class="required">*</span> :</p>
+                                <p class="p-header-2 font-family select-label">Status <span class="required">*</span> :</p>
                                 <select class="dropdown" name="option" id="dropdown" style="border-color: black;">
                                     <option name="option" value="0">--------</option>
                                     <option name="option" value="1">Accept</option>
@@ -151,17 +157,17 @@ class SubCategoryAdmin(admin.ModelAdmin):
                                 </select>
                             </div>
                             <div class="four-container">
-                                <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;:</p>
-                                <input type="text" id="input" name="name" placeholder="Enter..." class="input-text" style="border-color: black; border-radius: 20px;">
+                                <p class="p-header-2 font-family enter-label">Enter URL / Reason <span class="required">*</span>&nbsp;:</p>
+                                <input type="text" id="input" name="name" placeholder="Enter..." class="input-text" style="border-color: black; border-radius: 5px;">
                             </div>
                             <div class="five-container">
-                                <button type="button" onclick="getFormData('{}')" class="save-btn">save</button>
+                                <button type="button" onclick="getFormData('{}', {})" class="btn btn-success save-btn ">save</button>
                             </div>
                         </form>
                      </div>
                 </div>
                 <script>
-                     function popupFn() {{
+                     function popupFn(objId) {{
                         var form = document.getElementById("form");
                         var dropdown = document.getElementById("dropdown");
                         var input = document.querySelector(".input-text");
@@ -173,19 +179,19 @@ class SubCategoryAdmin(admin.ModelAdmin):
                             if (this.value === "1")
                                 input.placeholder = "Enter a URL";
                             else if (this.value === "2")
-                                input.placeholder = "Enter a reason";
+                                input.placeholder = "Enter a Reason";
                             else if (this.value === "0")
                                 input.placeholder = "Enter..";
                         }});
                         
                     }}
                     
-                    function getFormData(formUrl) {{
+                    function getFormData(formUrl, objId) {{
                         var option = document.getElementById("dropdown").value;
                         var name = document.getElementById("input").value;
-                        var url = formUrl + '?option=' + option + '&name=' + name;
+                        var url = formUrl + '?option=' + option + '&name=' + name + '&obj_id=' + objId;;
                         window.location.href = url;
-                    }}
+                    }}  
                     
                     document.getElementById("cancel").addEventListener("click", function()
                     {{
@@ -195,7 +201,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                 </script>
             </body>
         </html>
-        """,form_url)
+        """,form_url, obj.pk)
 
     Popup.short_description = "Action"
 

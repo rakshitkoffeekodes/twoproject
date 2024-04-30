@@ -202,6 +202,8 @@ JAZZMIN_SETTINGS = {
         {"model": "auth.user"}
     ],
 
+    "LOGOUT_URL": "/admin/logout/",
+
     #############
     # Side Menu #
     #############
