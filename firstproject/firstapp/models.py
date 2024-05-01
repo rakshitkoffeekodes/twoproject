@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import render
-# from .views import *
+from django.conf import settings
 
 
 class Category(models.Model):
@@ -22,3 +22,13 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return self.sub_category_name
+
+
+class UserTwoFactorAuthData(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        related_name='two_factor_auth_data',
+        on_delete=models.CASCADE
+    )
+
+    otp_secret = models.CharField(max_length=255)

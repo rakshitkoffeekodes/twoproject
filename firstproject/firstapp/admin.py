@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 from .models import *
+import pyotp
+from django.core.exceptions import ValidationError
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -201,7 +203,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                 </script>
             </body>
         </html>
-        """,form_url, obj.pk)
+        """, form_url, obj.pk)
 
     Popup.short_description = "Action"
 
@@ -210,6 +212,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
+
 
 #
 # <div class="demo" >
@@ -278,7 +281,20 @@ admin.site.register(SubCategory, SubCategoryAdmin)
 #                         window.location.href = url;
 #                     }}
 #
-                    # document.getElementById("cancel").addEventListener("click", function()
-                    # {{
-                    #     document.getElementById("form").style.display = "none";
-                    # }});
+# document.getElementById("cancel").addEventListener("click", function()
+# {{
+#     document.getElementById("form").style.display = "none";
+# }});
+
+def user_two_factor_auth_data_create(*, user) -> UserTwoFactorAuthData:
+    if hasattr(user, 'two_factor_auth_data'):
+        raise ValidationError(
+            'Can not have more than one 2FA related data.'
+        )
+
+    two_factor_auth_data = UserTwoFactorAuthData.objects.create(
+        user=user,
+        otp_secret=pyotp.random_base32()
+    )
+
+    return two_factor_auth_data
