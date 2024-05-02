@@ -1,5 +1,5 @@
-from django.apps import AppConfig
-from django.contrib.admin.apps import AdminConfig as BaseAdminConfig
+# from django.apps import AppConfig
+from django.contrib.admin import apps
 
 
 # class FirstappConfig(AppConfig):
@@ -7,5 +7,6 @@ from django.contrib.admin.apps import AdminConfig as BaseAdminConfig
 #     name = 'firstapp'
 
 
-class CustomAdminConfig(BaseAdminConfig):
+class CustomAdminConfig(apps.SimpleAdminConfig):
     default_site = "firstapp.sites.AdminSite"
+    name = 'firstapp'

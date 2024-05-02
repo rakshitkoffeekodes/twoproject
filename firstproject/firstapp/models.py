@@ -1,6 +1,10 @@
+import uuid
+
+import pyotp
+import qrcode
+import qrcode.image.svg
 from django.db import models
-from django.contrib.auth.models import User
-from django.shortcuts import render
+from typing import Optional
 from django.conf import settings
 
 
@@ -18,7 +22,7 @@ class SubCategory(models.Model):
     description = models.CharField(max_length=1000)
     reason = models.CharField(max_length=1000, null=True)
     accept = models.BooleanField(default=False)
-    category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.sub_category_name
@@ -32,3 +36,32 @@ class UserTwoFactorAuthData(models.Model):
     )
 
     otp_secret = models.CharField(max_length=255)
+    session_identifier = models.UUIDField(blank=True, null=True)
+
+    def generate_qr_code(self, name: Optional[str] = None, username: Optional[str] = None) -> str:
+        totp = pyotp.TOTP(self.otp_secret)
+
+        qr_uri = totp.provisioning_uri(
+            name=name,
+            issuer_name=username
+        )
+
+        image_factory = qrcode.image.svg.SvgPathImage
+        qr_code_image = qrcode.make(
+            qr_uri,
+            image_factory=image_factory
+        )
+
+        # The result is going to be an HTML <svg> tag
+        return qr_code_image.to_string().decode('utf_8')
+
+    def validate_otp(self, otp: str) -> bool:
+        totp = pyotp.TOTP(self.otp_secret)
+
+        return totp.verify(otp)
+
+    def rotate_session_identifier(self):
+        self.session_identifier = uuid.uuid4()
+
+        self.save(update_fields=["session_identifier"])
+

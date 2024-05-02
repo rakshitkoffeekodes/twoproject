@@ -1,9 +1,13 @@
 from django.contrib import admin
-from django.urls import reverse
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.urls import reverse, path
 from django.utils.html import format_html
 from .models import *
 import pyotp
 from django.core.exceptions import ValidationError
+
+from .views import AdminSetupTwoFactorAuthView
+from .views import AdminConfirmTwoFactorAuthView
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -210,91 +214,89 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ["sub_category_id", "sub_category_name", "description", "category_id", "reason", "accept", "Popup"]
 
 
+class MyAdminSite(admin.AdminSite):
+    site_header = "Monty Python administration"
+    default_site = 'my_custom_admin_site'
+
+    def get_urls(self):
+        base_urlpatterns = super().get_urls()
+
+        extra_urlpatterns = [
+            path(
+                "setup-2fa/",
+                self.admin_view(AdminSetupTwoFactorAuthView.as_view()),
+                name="setup-2fa"
+            ),
+            path(
+                "confirm-2fa/",
+                self.admin_view(AdminConfirmTwoFactorAuthView.as_view()),
+                name="confirm-2fa"
+            )
+        ]
+
+        return extra_urlpatterns + base_urlpatterns
+
+    def login(self, request, *args, **kwargs):
+        if request.method != 'POST':
+            return super().login(request, *args, **kwargs)
+
+        username = request.POST.get('username')
+
+        # How you query the user depending on the username is up to you
+        two_factor_auth_data = UserTwoFactorAuthData.objects.filter(
+            user__email=username
+        ).first()
+        request.POST._mutable = True
+        request.POST[REDIRECT_FIELD_NAME] = reverse('admin:confirm-2fa')
+        if two_factor_auth_data is None:
+            request.POST[REDIRECT_FIELD_NAME] = reverse("admin:setup-2fa")
+        request.POST._mutable = False
+
+        return super().login(request, *args, **kwargs)
+
+    def has_permission(self, request):
+        has_perm = super().has_permission(request)
+
+        if not has_perm:
+            return has_perm
+
+        two_factor_auth_data = UserTwoFactorAuthData.objects.filter(user=request.user).first()
+
+        allowed_paths = [
+            reverse("admin:confirm-2fa"),
+            reverse("admin:setup-2fa")
+        ]
+
+        if request.path in allowed_paths:
+            return True
+
+        if two_factor_auth_data is not None:
+            two_factor_auth_token = request.session.get("2fa_token")
+
+            return str(two_factor_auth_data.session_identifier) == two_factor_auth_token
+
+        return False
+
+
+admin_site = MyAdminSite(name="myadmin")
+admin_site.register(UserTwoFactorAuthData)
+admin_site.register(Category, CategoryAdmin)
+admin_site.register(SubCategory, SubCategoryAdmin)
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 
 
+# def user_two_factor_auth_data_create(*, user) -> UserTwoFactorAuthData:
+#     if hasattr(user, 'two_factor_auth_data'):
+#         raise ValidationError(
+#             'Can not have more than one 2FA related data.'
+#         )
 #
-# <div class="demo" >
-#                     <div id="form" class="popup" style="display:none;>
-#                         <form action="/accept_reject_form/" method="post" id="myForm" >
-#                             <div class="first-container">
-#                                 <div class="first-container-1">
-#                                     <p class="p-header font-family"> Accept Reject Action Form </p>
-#                                 </div>
-#                                 <div class="first-container-2">
-#                                     <i class="fa fa-times i" id="cancel" aria-hidden="true"></i>
-#                                 </div>
-#                             </div>
-#                             <div class="second-container">
-#                                 <div class="second-container-1" >
-#                                     <div class="first-div">
-#                                         <div class="first">
-#                                             <p class="p-header-2 font-family ">Select Accept / Reject</p>
-#                                         </div>
-#                                         <div class="second">
-#                                             <p class="p-header-2 font-family select-label">Select <span class="required">*</span> :</p>
-#                                             <select class="dropdown" name="option" id="dropdown">
-#                                                 <option name="option" value="0">--------</option>
-#                                                 <option name="option" value="1">Accept</option>
-#                                                 <option name="option" value="2">Reject</option>
-#                                             </select>
-#                                         </div>
-#                                         <div class="third">
-#                                             <p class="p-header-2 font-family enter-label">Enter <span class="required">*</span>&nbsp;&nbsp;&nbsp;:</p>
-#                                             <input type="text" name="name" id="input" class="text-input" placeholder="Enter ..">
-#                                         </div>
-#                                         <div class="four">
-#                                             <button type="button" onclick="getFormData('{}')" class="save-btn">save</button>
-#                                         </div>
-#                                     </div>
-#                                 </div>
-#                             </div>
-#                         </form>
-#                     </div>
-#                 </div>
-
+#     two_factor_auth_data = UserTwoFactorAuthData.objects.create(
+#         user=user,
+#         otp_secret=pyotp.random_base32()
+#     )
 #
-# function popupFn() {{
-#                         var form = document.getElementById("form");
-#                         var dropdown = document.getElementById("dropdown");
-#                         var input = document.querySelector(".text-input");
-#                         var cancel = document.getElementById("cancel");
-#                         var body = document.querySelector("body");
-#
-#                         form.style.display = "block";
-#
-#                         dropdown.addEventListener("change", function() {{
-#                             if (this.value === "1")
-#                                 input.placeholder = "Enter a URL";
-#                             else if (this.value === "2")
-#                                 input.placeholder = "Enter a reason";
-#                             else if (this.value === "0")
-#                                 input.placeholder = "Enter..";
-#                         }});
-#                     }}
-#
-#                     function getFormData(formUrl) {{
-#                         var option = document.getElementById("dropdown").value;
-#                         var name = document.getElementById("input").value;
-#                         var url = formUrl + '?option=' + option + '&name=' + name;
-#                         window.location.href = url;
-#                     }}
-#
-# document.getElementById("cancel").addEventListener("click", function()
-# {{
-#     document.getElementById("form").style.display = "none";
-# }});
-
-def user_two_factor_auth_data_create(*, user) -> UserTwoFactorAuthData:
-    if hasattr(user, 'two_factor_auth_data'):
-        raise ValidationError(
-            'Can not have more than one 2FA related data.'
-        )
-
-    two_factor_auth_data = UserTwoFactorAuthData.objects.create(
-        user=user,
-        otp_secret=pyotp.random_base32()
-    )
-
-    return two_factor_auth_data
+#     return two_factor_auth_data
