@@ -128,3 +128,8 @@ class AdminConfirmTwoFactorAuthView(FormView):
 
         return super().form_valid(form)
 
+
+def create_user(request):
+    print(request.POST['password'])
+    return redirect('admin:index')
+

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.models import User, Group
 from django.urls import reverse, path
 from django.utils.html import format_html
 from .models import *
@@ -242,14 +243,16 @@ class MyAdminSite(admin.AdminSite):
 
         username = request.POST.get('username')
 
-        # How you query the user depending on the username is up to you
         two_factor_auth_data = UserTwoFactorAuthData.objects.filter(
-            user__email=username
+            user__username=username
         ).first()
         request.POST._mutable = True
         request.POST[REDIRECT_FIELD_NAME] = reverse('admin:confirm-2fa')
+
         if two_factor_auth_data is None:
             request.POST[REDIRECT_FIELD_NAME] = reverse("admin:setup-2fa")
+        else:
+            request.POST[REDIRECT_FIELD_NAME] = reverse('admin:confirm-2fa')
         request.POST._mutable = False
 
         return super().login(request, *args, **kwargs)
@@ -284,19 +287,10 @@ admin_site.register(Category, CategoryAdmin)
 admin_site.register(SubCategory, SubCategoryAdmin)
 
 
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(SubCategory, SubCategoryAdmin)
+class UserAdmin(admin.ModelAdmin):
+
+    list_display = ('id', 'username', 'password', 'is_active', 'is_superuser', 'is_staff')
 
 
-# def user_two_factor_auth_data_create(*, user) -> UserTwoFactorAuthData:
-#     if hasattr(user, 'two_factor_auth_data'):
-#         raise ValidationError(
-#             'Can not have more than one 2FA related data.'
-#         )
-#
-#     two_factor_auth_data = UserTwoFactorAuthData.objects.create(
-#         user=user,
-#         otp_secret=pyotp.random_base32()
-#     )
-#
-#     return two_factor_auth_data
+admin_site.register(User, UserAdmin)
+admin_site.register(Group)
