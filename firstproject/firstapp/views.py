@@ -26,37 +26,33 @@ from .twofactor import user_two_factor_auth_data_create
 #     return render(request, 'admin/change_list.html')
 
 def accept_reject_form(request, pk):
-    print('id============>', pk)
-    print(request.method)
-    print('=======>', request.GET.get('obj_id'))
-    print('=======>', request.GET.get('name'))
     option = request.GET.get('option')
     name = request.GET.get('name')
+    print('-------->><><><<', option)
     try:
         sub_category_data = SubCategory.objects.get(sub_category_id=pk)
-        print('name', name, 'option', option)
-        if option == 0:
-            return redirect('admin:index')
+        if option == '0':
+            return redirect('/myadmin/firstapp/subcategory/')
         if name == '':
-            return redirect('admin:index')
+            return redirect('/myadmin/firstapp/subcategory/')
         if option == '1':
-            print(name)
+
             url = name
             data = {'name': sub_category_data.sub_category_name, 'description': sub_category_data.description}
             response = requests.post(url, data=data)
             sub_category_data.accept = True
             sub_category_data.reason = '-'
             sub_category_data.save()
-            return redirect('admin:index')
+            return redirect('/myadmin/firstapp/subcategory/')
 
         elif option == '2':
             print(sub_category_data.sub_category_id)
             sub_category_data.reason = name
             sub_category_data.accept = False
             sub_category_data.save()
-            return redirect('admin:index')
+            return redirect('/myadmin/firstapp/subcategory/')
     except Exception as e:
-        return redirect('admin:index')
+        return redirect('/myadmin/firstapp/subcategory/')
 
 
 def logout(request):
@@ -129,7 +125,5 @@ class AdminConfirmTwoFactorAuthView(FormView):
         return super().form_valid(form)
 
 
-def create_user(request):
-    print(request.POST['password'])
-    return redirect('admin:index')
-
+def login(request):
+    return redirect('myadmin:login')

@@ -17,6 +17,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class SubCategoryAdmin(admin.ModelAdmin):
     def Popup(self, obj):
+
         form_url = reverse('accept_reject_form', args=[obj.pk])
         print(form_url)
         return format_html("""
@@ -43,7 +44,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         background-color: rgba(0, 0, 0, 0.5);
                         z-index: 10000;
                     }}
-                    
+
                     .form-data {{
                         position: fixed;
                         background-color: #f4f6f9;
@@ -53,7 +54,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         left: 40vw;
                         top: 25vh;
                     }}
-                    
+
                     .cancel-icon{{
                         position: absolute;
                         font-size: 10px;
@@ -64,12 +65,12 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         padding: 5px 6px;
                         border-radius: 100%;
                     }}
-                    
+
                     .first-container {{
                         width: 100%;
                         height: 5%;
                     }}
-                    
+
                     .second-container {{
                         padding-left: 20px;
                         padding-top: 10px;
@@ -77,36 +78,36 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         font-weight: bold;
                         color: #343a40;
                     }}
-                    
+
                     .third-container {{
                         width: 100%;
                         height: 25%;
                         color: #343a40;
                     }}
-                    
+
                     .four-container {{
                         width: 100%;
                         height: 25%;
                         color: #343a40;
-                        
+
                     }}
-                    
+
                     .five-container {{
                         width: 100%;
                         height: 30%;
                     }}
-                    
+
                     .required {{
                         color:red;
                     }}
-                    
+
                     .select-label{{
                         font-family: "Times New Roman", Times, serif;
                         padding-left: 20px;
                         padding-top: 10px;
                         font-size: 15px;
                     }}
-                    
+
                     .dropdown {{
                         width:88%;
                         height: 45%;
@@ -117,14 +118,14 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         padding-left: 10px;
                         padding-right: 10px;
                     }}
-                    
+
                     .enter-label{{
                         font-family: "Times New Roman", Times, serif;
                         padding-left: 20px;
                         padding-top: 15px;
                         font-size: 15px;
                     }}
-                    
+
                     .input-text {{
                         width:88%;
                         margin-left:20px;
@@ -132,7 +133,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         font-family: "Times New Roman", Times, serif;
                         outline: none;
                     }}
-                    
+
                     .save-btn {{
                         margin-top:10%;
                         margin-left:20px;
@@ -141,9 +142,9 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         color: white;
                         cursor: pointer;
                     }}
-                    
+
                 </style>
-                <button type="button" onclick="popupFn()" id="button" class="btn btn-primary">
+                <button type="button" onclick="popupFn(obj.pk)" id="button" class="btn btn-primary">
                     Action
                 </button>
                 <div id="form" class="popup" style="display:none;">
@@ -174,7 +175,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                      </div>
                 </div>
                 <script>
-                     function popupFn(objId) {{
+                     function popupFn(objId) {{ 
                         var form = document.getElementById("form");
                         var dropdown = document.getElementById("dropdown");
                         var input = document.querySelector(".input-text");
@@ -190,21 +191,21 @@ class SubCategoryAdmin(admin.ModelAdmin):
                             else if (this.value === "0")
                                 input.placeholder = "Enter..";
                         }});
-                        
+
                     }}
-                    
+
                     function getFormData(formUrl, objId) {{
                         var option = document.getElementById("dropdown").value;
                         var name = document.getElementById("input").value;
                         var url = formUrl + '?option=' + option + '&name=' + name + '&obj_id=' + objId;;
                         window.location.href = url;
                     }}  
-                    
+
                     document.getElementById("cancel").addEventListener("click", function()
                     {{
                         document.getElementById("form").style.display = "none";
                     }});
-                    
+
                 </script>
             </body>
         </html>
@@ -286,11 +287,19 @@ admin_site.register(UserTwoFactorAuthData)
 admin_site.register(Category, CategoryAdmin)
 admin_site.register(SubCategory, SubCategoryAdmin)
 
+from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
-class UserAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'username', 'password', 'is_active', 'is_superuser', 'is_staff')
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ['id', 'username', 'password', 'is_active', 'is_staff', 'is_superuser']
+
+    def save_model(self, request, obj, form, change):
+        if obj.password:
+            obj.password = make_password(obj.password)
+        super().save_model(request, obj, form, change)
 
 
-admin_site.register(User, UserAdmin)
+admin_site.register(User, CustomUserAdmin)
 admin_site.register(Group)

@@ -9,6 +9,9 @@
       <p>{{ otp_secret }}</p>
       <p>Enter it inside a 2FA app (Google Authenticator, Authy) or scan the QR code below.</p>
       {{ qr_code|safe }}
+      <div class="submit-row">
+        <button><a href="{% url 'login' %}" >Submit</a></button>
+      </div>
     {% else %}
       {% if form_errors %}
 	{% for error in form_errors %}
@@ -19,10 +22,12 @@
       {% else %}
 	<label>Click the button generate a 2FA application code.</label>
       {% endif %}
-    {% endif %}
-
     <div class="submit-row">
       <input type="submit" value="Generate">
     </div>
+    {% endif %}
+
+
+
   </form>
 {% endblock %}
