@@ -1,23 +1,50 @@
-from django.contrib import admin
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.models import User, Group
 from django.urls import reverse, path
 from django.utils.html import format_html
 from .models import *
-import pyotp
-from django.core.exceptions import ValidationError
-
+from django.contrib import admin
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from .views import AdminSetupTwoFactorAuthView
 from .views import AdminConfirmTwoFactorAuthView
 
+# this function is for edit and delete button
+
+def edit_and_delete_button(obj):
+    edit_url = reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=[obj.pk])
+    delete_url = reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=[obj.pk])
+
+    return format_html("""<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        </head>
+        <body>
+            <a class="button" href="{}"><i class="fas fa-edit"></i></a>&nbsp;&nbsp;
+            <a class="button" href="{}"><i class="fas fa-trash-alt"></i></a>
+        </body>
+        </html>""", edit_url, delete_url)
+
+
+edit_and_delete_button.short_description = 'Action'
+
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "description")
+    list_display = ("id", "name", "description", edit_and_delete_button)
+    search_fields = ['name', 'description']
+    actions = None
+    list_display_links = None
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
-    def Popup(self, obj):
 
+    # this function is for accept reject form popup
+
+    def Popup(self, obj):
         form_url = reverse('accept_reject_form', args=[obj.pk])
         print(form_url)
         return format_html("""
@@ -144,7 +171,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                     }}
 
                 </style>
-                <button type="button" onclick="popupFn(obj.pk)" id="button" class="btn btn-primary">
+                <button type="button" onclick="popupFn()" id="button" class="btn btn-primary">
                     Action
                 </button>
                 <div id="form" class="popup" style="display:none;">
@@ -213,12 +240,19 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
     Popup.short_description = "Action"
 
-    list_display = ["sub_category_id", "sub_category_name", "description", "category_id", "reason", "accept", "Popup"]
+    list_display = ["sub_category_id", "category", "sub_category_name", "description", "reason", "accept", "Popup", edit_and_delete_button]
+    search_fields = ['sub_category_name', 'description', 'reason']
+    actions = None
+
+
+# this class is for custom admin
 
 
 class MyAdminSite(admin.AdminSite):
     site_header = "Monty Python administration"
     default_site = 'my_custom_admin_site'
+
+    # this function is for get urls
 
     def get_urls(self):
         base_urlpatterns = super().get_urls()
@@ -237,6 +271,8 @@ class MyAdminSite(admin.AdminSite):
         ]
 
         return extra_urlpatterns + base_urlpatterns
+
+    # this function is for user login
 
     def login(self, request, *args, **kwargs):
         if request.method != 'POST':
@@ -257,6 +293,8 @@ class MyAdminSite(admin.AdminSite):
         request.POST._mutable = False
 
         return super().login(request, *args, **kwargs)
+
+    # this function is for has permission
 
     def has_permission(self, request):
         has_perm = super().has_permission(request)
@@ -282,18 +320,13 @@ class MyAdminSite(admin.AdminSite):
         return False
 
 
-admin_site = MyAdminSite(name="myadmin")
-admin_site.register(UserTwoFactorAuthData)
-admin_site.register(Category, CategoryAdmin)
-admin_site.register(SubCategory, SubCategoryAdmin)
-
-from django.contrib import admin
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-
-
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'username', 'password', 'is_active', 'is_staff', 'is_superuser']
+    list_display = ['id', 'username', 'password', 'is_active', 'is_staff', 'is_superuser', edit_and_delete_button]
+    list_filter = ('is_staff', 'is_superuser', 'is_active')
+    search_fields = ['username']
+    actions = None
+
+    # this function is save model
 
     def save_model(self, request, obj, form, change):
         if obj.password:
@@ -301,5 +334,9 @@ class CustomUserAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+admin_site = MyAdminSite(name="myadmin")
+admin_site.register(UserTwoFactorAuthData)
+admin_site.register(Category, CategoryAdmin)
+admin_site.register(SubCategory, SubCategoryAdmin)
 admin_site.register(User, CustomUserAdmin)
 admin_site.register(Group)

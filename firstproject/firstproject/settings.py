@@ -179,20 +179,20 @@ JAZZMIN_SETTINGS = {
     ############
 
     # Links to put along the top menu
-    "topmenu_links": [
+    # "topmenu_links": [
 
         # Url that gets reversed (Permissions can be added)
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        # {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        # {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
 
         # model admin to link to (Permissions checked against model)
-        {"model": "auth.User"},
+        # {"model": "auth.User"},
 
         # App with dropdown menu to all its models pages (Permissions checked against models)
-        {"app": "books"},
-    ],
+    #     {"app": "books"},
+    # ],
 
     #############
     # User Menu #
@@ -261,7 +261,7 @@ JAZZMIN_SETTINGS = {
     # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
     "use_google_fonts_cdn": True,
     # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": True,
+    "show_ui_builder": False,
     "show_ui_builder_add_model_button": True,
     "show_ui_builder_related_model_list": True,
 

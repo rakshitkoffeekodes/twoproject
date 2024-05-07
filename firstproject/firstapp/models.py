@@ -1,10 +1,7 @@
 import uuid
-
 import pyotp
 import qrcode
 import qrcode.image.svg
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from typing import Optional
 from django.conf import settings
@@ -40,6 +37,8 @@ class UserTwoFactorAuthData(models.Model):
     otp_secret = models.CharField(max_length=255)
     session_identifier = models.UUIDField(blank=True, null=True)
 
+    # this function is for generate qr code
+
     def generate_qr_code(self, name: Optional[str] = None, username: Optional[str] = None) -> str:
         totp = pyotp.TOTP(self.otp_secret)
 
@@ -57,15 +56,19 @@ class UserTwoFactorAuthData(models.Model):
         # The result is going to be an HTML <svg> tag
         return qr_code_image.to_string().decode('utf_8')
 
+    # this function is for validate otp
+
     def validate_otp(self, otp: str) -> bool:
         totp = pyotp.TOTP(self.otp_secret)
 
         return totp.verify(otp)
+
+    # this function is for rotate session identifier
 
     def rotate_session_identifier(self):
         self.session_identifier = uuid.uuid4()
 
         self.save(update_fields=["session_identifier"])
 
-
-
+    class Meta:
+        verbose_name = 'User 2FA Data'

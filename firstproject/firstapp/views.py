@@ -1,66 +1,44 @@
 from django import forms
-from django.http import HttpRequest
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from rest_framework.decorators import api_view
 from .models import *
 import requests
 from .twofactor import user_two_factor_auth_data_create
+from django.core.exceptions import ValidationError
+from django.views.generic import TemplateView, FormView
 
 
-# #
-# def add_category(request: HttpRequest):
-#     if request.method == 'POST':
-#         name = request.POST.get('name')
-#         description = request.POST.get('description')
-#         user_ip = request.META.get('REMOTE_ADDR')
-#         print('======>', user_ip)
-#         category = Category.objects.create(name=name, description=description)
-#         category.save()
-#
-#         second_project_url = 'http://192.168.1.107:8001/category/'
-#         data = {'name': name, 'description': description}
-#         response = requests.post(second_project_url, data=data)
-#         return redirect('admin:index')
-#
-#     return render(request, 'admin/change_list.html')
+# This function is for the accept reject form
 
 def accept_reject_form(request, pk):
     option = request.GET.get('option')
     name = request.GET.get('name')
-    print('-------->><><><<', option)
+    redirect_url = '/myadmin/firstapp/subcategory/'
+
     try:
         sub_category_data = SubCategory.objects.get(sub_category_id=pk)
-        if option == '0':
-            return redirect('/myadmin/firstapp/subcategory/')
-        if name == '':
-            return redirect('/myadmin/firstapp/subcategory/')
-        if option == '1':
 
+        if option == '0' or name == '':
+            return redirect(redirect_url)
+
+        if option == '1':
             url = name
             data = {'name': sub_category_data.sub_category_name, 'description': sub_category_data.description}
             response = requests.post(url, data=data)
             sub_category_data.accept = True
             sub_category_data.reason = '-'
             sub_category_data.save()
-            return redirect('/myadmin/firstapp/subcategory/')
-
         elif option == '2':
-            print(sub_category_data.sub_category_id)
             sub_category_data.reason = name
             sub_category_data.accept = False
             sub_category_data.save()
-            return redirect('/myadmin/firstapp/subcategory/')
+
     except Exception as e:
-        return redirect('/myadmin/firstapp/subcategory/')
+        return redirect(redirect_url)
 
+    return redirect(redirect_url)
 
-def logout(request):
-    return render(request, 'registration/logged_out.html')
-
-
-from django.core.exceptions import ValidationError
-from django.views.generic import TemplateView, FormView
+# This class is used to create otp and qr_code in two-factor authentication
 
 
 class AdminSetupTwoFactorAuthView(TemplateView):
@@ -83,6 +61,8 @@ class AdminSetupTwoFactorAuthView(TemplateView):
             context["form_errors"] = exc.messages
 
         return self.render_to_response(context)
+
+# In this class, no is to check if otp is correct or not, if otp is correct, then login will be approved and otp is incorrect then will be error show.
 
 
 class AdminConfirmTwoFactorAuthView(FormView):
@@ -123,6 +103,8 @@ class AdminConfirmTwoFactorAuthView(FormView):
         self.request.session['2fa_token'] = str(form.two_factor_auth_data.session_identifier)
 
         return super().form_valid(form)
+
+# This function is to take you to the login page
 
 
 def login(request):

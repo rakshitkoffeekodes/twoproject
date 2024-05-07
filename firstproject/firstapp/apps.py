@@ -10,3 +10,4 @@ from django.contrib.admin import apps
 class CustomAdminConfig(apps.SimpleAdminConfig):
     default_site = "firstapp.sites.AdminSite"
     name = 'firstapp'
+    verbose_name = 'First App'

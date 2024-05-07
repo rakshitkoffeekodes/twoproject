@@ -2,6 +2,8 @@ import pyotp
 from django.core.exceptions import ValidationError
 from .models import UserTwoFactorAuthData
 
+# this function is for user two-factor auth data create
+
 
 def user_two_factor_auth_data_create(*, user) -> UserTwoFactorAuthData:
     if hasattr(user, 'two_factor_auth_data'):
