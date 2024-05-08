@@ -6,6 +6,8 @@ from django.db import models
 from typing import Optional
 from django.conf import settings
 
+# This class is for creating category models
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -13,6 +15,8 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+# This class is for creating category models
 
 
 class SubCategory(models.Model):
@@ -26,6 +30,8 @@ class SubCategory(models.Model):
     def __str__(self):
         return self.sub_category_name
 
+# This class is for creating UserTwoFactorAuthData model
+
 
 class UserTwoFactorAuthData(models.Model):
     user = models.OneToOneField(
@@ -37,7 +43,7 @@ class UserTwoFactorAuthData(models.Model):
     otp_secret = models.CharField(max_length=255)
     session_identifier = models.UUIDField(blank=True, null=True)
 
-    # this function is for generate qr code
+    # This function creates an image of qr_code
 
     def generate_qr_code(self, name: Optional[str] = None, username: Optional[str] = None) -> str:
         totp = pyotp.TOTP(self.otp_secret)
@@ -53,17 +59,16 @@ class UserTwoFactorAuthData(models.Model):
             image_factory=image_factory
         )
 
-        # The result is going to be an HTML <svg> tag
         return qr_code_image.to_string().decode('utf_8')
 
-    # this function is for validate otp
+    # This function is for validation of OTP
 
     def validate_otp(self, otp: str) -> bool:
         totp = pyotp.TOTP(self.otp_secret)
 
         return totp.verify(otp)
 
-    # this function is for rotate session identifier
+    # This function saves the session_identifier in update_fields
 
     def rotate_session_identifier(self):
         self.session_identifier = uuid.uuid4()

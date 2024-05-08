@@ -1,5 +1,5 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.urls import reverse, path
 from django.utils.html import format_html
 from .models import *
@@ -9,12 +9,14 @@ from django.contrib.auth.hashers import make_password
 from .views import AdminSetupTwoFactorAuthView
 from .views import AdminConfirmTwoFactorAuthView
 
-# this function is for edit and delete button
+
+# This function is to be edit and delete button and this function is used in list display of model.
 
 def edit_and_delete_button(obj):
+    # This makes edit_url and delete_url edit and delete url.
+
     edit_url = reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=[obj.pk])
     delete_url = reverse(f'admin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=[obj.pk])
-
     return format_html("""<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -32,6 +34,8 @@ def edit_and_delete_button(obj):
 
 edit_and_delete_button.short_description = 'Action'
 
+# This class is built to use list_display, search_field, actions, list_display_link
+
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "description", edit_and_delete_button)
@@ -39,14 +43,17 @@ class CategoryAdmin(admin.ModelAdmin):
     actions = None
     list_display_links = None
 
+# This class is built to use popup function, list_display, search_field, actions
+
 
 class SubCategoryAdmin(admin.ModelAdmin):
 
-    # this function is for accept reject form popup
+    # This function is for popup of accept and reject in which url is inserted on selecting accept and reason is inserted on selecting reject
 
     def Popup(self, obj):
+        # This form_url makes the url of the accept_reject_form
+
         form_url = reverse('accept_reject_form', args=[obj.pk])
-        print(form_url)
         return format_html("""
         <!DOCTYPE html>
         <html lang="en">
@@ -218,15 +225,14 @@ class SubCategoryAdmin(admin.ModelAdmin):
                             else if (this.value === "0")
                                 input.placeholder = "Enter..";
                         }});
-
                     }}
 
                     function getFormData(formUrl, objId) {{
                         var option = document.getElementById("dropdown").value;
-                        var name = document.getElementById("input").value;
-                        var url = formUrl + '?option=' + option + '&name=' + name + '&obj_id=' + objId;;
+                        var name = document.getElementById("input").value; 
+                        var url = formUrl + '?option=' + option + '&name=' + name + '&obj_id=' + objId;
                         window.location.href = url;
-                    }}  
+                    }}
 
                     document.getElementById("cancel").addEventListener("click", function()
                     {{
@@ -240,19 +246,19 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
     Popup.short_description = "Action"
 
-    list_display = ["sub_category_id", "category", "sub_category_name", "description", "reason", "accept", "Popup", edit_and_delete_button]
+    list_display = ["sub_category_id", "category", "sub_category_name", "description", "reason", "accept", "Popup",
+                    edit_and_delete_button]
     search_fields = ['sub_category_name', 'description', 'reason']
     actions = None
 
-
-# this class is for custom admin
+# This class is created for custom admin sites with site_header, default_site and get_url, login, has_permission functions added.
 
 
 class MyAdminSite(admin.AdminSite):
     site_header = "Monty Python administration"
     default_site = 'my_custom_admin_site'
 
-    # this function is for get urls
+    # This get_urls function has two urls ones first is for generating url qr_code and OTP and second is for url OTP confirmation.
 
     def get_urls(self):
         base_urlpatterns = super().get_urls()
@@ -272,7 +278,7 @@ class MyAdminSite(admin.AdminSite):
 
         return extra_urlpatterns + base_urlpatterns
 
-    # this function is for user login
+    # This function is for login to admin panel
 
     def login(self, request, *args, **kwargs):
         if request.method != 'POST':
@@ -284,7 +290,8 @@ class MyAdminSite(admin.AdminSite):
             user__username=username
         ).first()
         request.POST._mutable = True
-        request.POST[REDIRECT_FIELD_NAME] = reverse('admin:confirm-2fa')
+
+        # if condition check the two_factor_auth_data is none
 
         if two_factor_auth_data is None:
             request.POST[REDIRECT_FIELD_NAME] = reverse("admin:setup-2fa")
@@ -294,7 +301,7 @@ class MyAdminSite(admin.AdminSite):
 
         return super().login(request, *args, **kwargs)
 
-    # this function is for has permission
+    # This function is for whether the user has permission or not
 
     def has_permission(self, request):
         has_perm = super().has_permission(request)
@@ -312,12 +319,16 @@ class MyAdminSite(admin.AdminSite):
         if request.path in allowed_paths:
             return True
 
+        # If condition check the two_factor_auth_data is not none
+
         if two_factor_auth_data is not None:
             two_factor_auth_token = request.session.get("2fa_token")
 
             return str(two_factor_auth_data.session_identifier) == two_factor_auth_token
 
         return False
+
+# This class belongs to custom user admin which is used for list_display, list_filter, search_field, actions
 
 
 class CustomUserAdmin(admin.ModelAdmin):
@@ -326,7 +337,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     search_fields = ['username']
     actions = None
 
-    # this function is save model
+    # This function is designed to hash passwords
 
     def save_model(self, request, obj, form, change):
         if obj.password:

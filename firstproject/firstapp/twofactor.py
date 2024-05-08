@@ -2,7 +2,7 @@ import pyotp
 from django.core.exceptions import ValidationError
 from .models import UserTwoFactorAuthData
 
-# this function is for user two-factor auth data create
+# This function saves the user and OTP in UserTwoFactorAuthData
 
 
 def user_two_factor_auth_data_create(*, user) -> UserTwoFactorAuthData:

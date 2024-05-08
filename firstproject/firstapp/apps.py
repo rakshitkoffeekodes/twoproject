@@ -6,6 +6,7 @@ from django.contrib.admin import apps
 #     default_auto_field = 'django.db.models.BigAutoField'
 #     name = 'firstapp'
 
+# This class is created to handle the custom admin site that has been created
 
 class CustomAdminConfig(apps.SimpleAdminConfig):
     default_site = "firstapp.sites.AdminSite"

@@ -8,28 +8,34 @@ from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView, FormView
 
 
-# This function is for the accept reject form
+# This function is for accept reject form
 
 def accept_reject_form(request, pk):
+    print(pk)
     option = request.GET.get('option')
-    name = request.GET.get('name')
+    reason_or_url = request.GET.get('name')
     redirect_url = '/myadmin/firstapp/subcategory/'
 
     try:
         sub_category_data = SubCategory.objects.get(sub_category_id=pk)
 
-        if option == '0' or name == '':
+        if option == '0' or reason_or_url == '':
             return redirect(redirect_url)
 
+        # if condition check the option is 1 And if option is 1 then it will send data with url
+
         if option == '1':
-            url = name
+            url = reason_or_url
             data = {'name': sub_category_data.sub_category_name, 'description': sub_category_data.description}
             response = requests.post(url, data=data)
             sub_category_data.accept = True
             sub_category_data.reason = '-'
             sub_category_data.save()
+
+        # elif condition check the option is 2 and elif option is 2 then it will store reason in sub_category_data
+
         elif option == '2':
-            sub_category_data.reason = name
+            sub_category_data.reason = reason_or_url
             sub_category_data.accept = False
             sub_category_data.save()
 
@@ -38,7 +44,8 @@ def accept_reject_form(request, pk):
 
     return redirect(redirect_url)
 
-# This class is used to create otp and qr_code in two-factor authentication
+
+# This class is for generating OTP and qr_code
 
 
 class AdminSetupTwoFactorAuthView(TemplateView):
@@ -49,8 +56,12 @@ class AdminSetupTwoFactorAuthView(TemplateView):
         user = request.user
 
         try:
+            # is sent to the user in user_two_factor_auth_data_create
+
             two_factor_auth_data = user_two_factor_auth_data_create(user=user)
             otp_secret = two_factor_auth_data.otp_secret
+
+            # In this function the tax_code and OTP are generated
 
             context["otp_secret"] = otp_secret
             context["qr_code"] = two_factor_auth_data.generate_qr_code(
@@ -62,7 +73,8 @@ class AdminSetupTwoFactorAuthView(TemplateView):
 
         return self.render_to_response(context)
 
-# In this class, no is to check if otp is correct or not, if otp is correct, then login will be approved and otp is incorrect then will be error show.
+
+# This class is for admin confirmation if OTP is correct then will send to index page else will give error
 
 
 class AdminConfirmTwoFactorAuthView(FormView):
@@ -71,6 +83,8 @@ class AdminConfirmTwoFactorAuthView(FormView):
 
     class Form(forms.Form):
         otp = forms.CharField(required=True)
+
+        # This function is for OTP to check if OTP is valid or not
 
         def clean_otp(self):
             self.two_factor_auth_data = UserTwoFactorAuthData.objects.filter(
@@ -87,8 +101,12 @@ class AdminConfirmTwoFactorAuthView(FormView):
 
             return otp
 
+    # This function returns the form class
+
     def get_form_class(self):
         return self.Form
+
+    # In this function super() takes the property of the above class and stores request.user in form.user
 
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
@@ -97,6 +115,8 @@ class AdminConfirmTwoFactorAuthView(FormView):
 
         return form
 
+    # This function is of for whether the form is valid or not
+
     def form_valid(self, form):
         form.two_factor_auth_data.rotate_session_identifier()
 
@@ -104,8 +124,8 @@ class AdminConfirmTwoFactorAuthView(FormView):
 
         return super().form_valid(form)
 
-# This function is to take you to the login page
 
+# This function is to take you to the login page
 
 def login(request):
     return redirect('myadmin:login')
