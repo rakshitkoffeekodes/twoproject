@@ -52,7 +52,6 @@ class SubCategoryAdmin(admin.ModelAdmin):
 
     def Popup(self, obj):
         # This form_url makes the url of the accept_reject_form
-
         form_url = reverse('accept_reject_form', args=[obj.pk])
         return format_html("""
         <!DOCTYPE html>
@@ -89,7 +88,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         top: 25vh;
                     }}
 
-                    .cancel-icon{{
+                    .cancel-icon {{
                         position: absolute;
                         font-size: 10px;
                         right: 8px;
@@ -135,7 +134,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         color:red;
                     }}
 
-                    .select-label{{
+                    .select-label {{
                         font-family: "Times New Roman", Times, serif;
                         padding-left: 20px;
                         padding-top: 10px;
@@ -153,7 +152,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         padding-right: 10px;
                     }}
 
-                    .enter-label{{
+                    .enter-label {{
                         font-family: "Times New Roman", Times, serif;
                         padding-left: 20px;
                         padding-top: 15px;
@@ -178,7 +177,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
                     }}
 
                 </style>
-                <button type="button" onclick="popupFn()" id="button" class="btn btn-primary">
+                <button type="button" onclick="popupFn('{0}')" id="button" class="btn btn-primary">
                     Action
                 </button>
                 <div id="form" class="popup" style="display:none;">
@@ -203,12 +202,14 @@ class SubCategoryAdmin(admin.ModelAdmin):
                                 <input type="text" id="input" name="name" placeholder="Enter..." class="input-text" style="border-color: black; border-radius: 5px;">
                             </div>
                             <div class="five-container">
-                                <button type="button" onclick="getFormData('{}', {})" class="btn btn-success save-btn ">save</button>
+                                <button type="button" onclick="getFormData('{0}', {1})" class="btn btn-success save-btn ">save</button>
                             </div>
                         </form>
                      </div>
                 </div>
                 <script>
+                    let number = 0;
+                    
                      function popupFn(objId) {{ 
                         var form = document.getElementById("form");
                         var dropdown = document.getElementById("dropdown");
@@ -216,7 +217,8 @@ class SubCategoryAdmin(admin.ModelAdmin):
                         var cancel = document.getElementById("cancel");
 
                         form.style.display = "block";
-
+                        number = objId;
+                        console.log('number', number, 'objId', objId)
                         dropdown.addEventListener("change", function() {{
                             if (this.value === "1")
                                 input.placeholder = "Enter a URL";
@@ -225,12 +227,26 @@ class SubCategoryAdmin(admin.ModelAdmin):
                             else if (this.value === "0")
                                 input.placeholder = "Enter..";
                         }});
+                        
+                        const url = objId;
+                        const regex = /\/(\d+)\/$/;
+                        const match = url.match(regex);
+                        if (match) {{
+                            const data = match[1];
+                            number=data
+                        }} 
+                        else {{
+                            console.log("Number not found in the URL.");
+                        }}
+                        console.log('objID',number)
                     }}
-
-                    function getFormData(formUrl, objId) {{
+                    
+                    function getFormData(formUrl) {{
+                        console.log('======', number);
                         var option = document.getElementById("dropdown").value;
                         var name = document.getElementById("input").value; 
-                        var url = formUrl + '?option=' + option + '&name=' + name + '&obj_id=' + objId;
+                        var url = formUrl + '?option=' + option + '&name=' + name + '&obj_id=' + number;
+                        console.log('url', url)
                         window.location.href = url;
                     }}
 

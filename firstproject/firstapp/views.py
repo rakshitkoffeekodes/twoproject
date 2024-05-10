@@ -11,13 +11,14 @@ from django.views.generic import TemplateView, FormView
 # This function is for accept reject form
 
 def accept_reject_form(request, pk):
-    print(pk)
     option = request.GET.get('option')
     reason_or_url = request.GET.get('name')
+    data_id = request.GET.get('obj_id')
+    print(data_id)
     redirect_url = '/myadmin/firstapp/subcategory/'
 
     try:
-        sub_category_data = SubCategory.objects.get(sub_category_id=pk)
+        sub_category_data = SubCategory.objects.get(sub_category_id=data_id)
 
         if option == '0' or reason_or_url == '':
             return redirect(redirect_url)
